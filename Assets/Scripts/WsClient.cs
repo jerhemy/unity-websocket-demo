@@ -51,7 +51,7 @@ public class WsClient
     /// Method which connects client to the server.
     /// </summary>
     /// <returns>The connect.</returns>
-    public async Task Connect(string serverURL)
+    public async Task Connect(string serverURL, Action onConnect)
     {
         serverUri = new Uri(serverURL);
         Debug.Log("Connecting to: " + serverUri);
@@ -62,6 +62,8 @@ public class WsClient
             Task.Delay(50).Wait();
         }
         Debug.Log("Connect status: " + ws.State);
+        
+        if (IsConnectionOpen()) onConnect();
     }
 
     #region [Status]

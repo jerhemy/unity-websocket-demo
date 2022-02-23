@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ServerCommunication : MonoBehaviour
 {
@@ -26,12 +27,15 @@ public class ServerCommunication : MonoBehaviour
     private WsClient client;
 
     [SerializeField] private TMP_InputField inputField;
+
+    public UnityEvent OnConnected;
     
     /// <summary>
     /// Unity method called on initialization
     /// </summary>
     private void Awake()
     {
+        OnConnected.AddListener(HandleConnected);
         client = new WsClient();
     }
 
@@ -51,6 +55,11 @@ public class ServerCommunication : MonoBehaviour
         }
     }
 
+    private void HandleConnected()
+    {
+        
+    }
+
     /// <summary>
     /// Method responsible for handling server messages
     /// </summary>
@@ -59,6 +68,10 @@ public class ServerCommunication : MonoBehaviour
     {
         Debug.Log("Server: " + msg);
     }
+    
+    /// <summary>
+    /// Calls UnityEvent upon successful Connection
+    /// </summary>
 
     public void SetIP(string hostIP)
     {
@@ -78,7 +91,7 @@ public class ServerCommunication : MonoBehaviour
     {
         server = "ws://" + host + ":" + port;
         Debug.Log("Connecting to: " + server);
-        await client.Connect(server);
+        await client.Connect(server, OnConnected.Invoke);
     }
 
     /// <summary>
