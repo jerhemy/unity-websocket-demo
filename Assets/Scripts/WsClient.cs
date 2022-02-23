@@ -33,12 +33,10 @@ public class WsClient
     /// Initializes a new instance of the <see cref="T:WsClient"/> class.
     /// </summary>
     /// <param name="serverURL">Server URL.</param>
-    public WsClient(string serverURL)
+    public WsClient()
     {
         encoder = new UTF8Encoding();
         ws = new ClientWebSocket();
-
-        serverUri = new Uri(serverURL);
 
         receiveQueue = new ConcurrentQueue<string>();
         receiveThread = new Thread(RunReceive);
@@ -53,8 +51,9 @@ public class WsClient
     /// Method which connects client to the server.
     /// </summary>
     /// <returns>The connect.</returns>
-    public async Task Connect()
+    public async Task Connect(string serverURL)
     {
+        serverUri = new Uri(serverURL);
         Debug.Log("Connecting to: " + serverUri);
         await ws.ConnectAsync(serverUri, CancellationToken.None);
         while (IsConnecting())

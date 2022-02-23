@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -5,7 +6,7 @@ public class ServerCommunication : MonoBehaviour
 {
     // Server IP address
     [SerializeField]
-    private string hostIP;
+    private string hostIP = "localhost";
 
     // Server port
     [SerializeField]
@@ -13,10 +14,11 @@ public class ServerCommunication : MonoBehaviour
 
     // Flag to use localhost
     [SerializeField]
-    private bool useLocalhost = true;
+    private bool useLocalhost = false;
 
     // Address used in code
     private string host => useLocalhost ? "localhost" : hostIP;
+    
     // Final server address
     private string server;
 
@@ -30,9 +32,7 @@ public class ServerCommunication : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        server = "ws://" + host + ":" + port;
-        client = new WsClient(server);
-        ConnectToServer();
+        client = new WsClient();
     }
 
     /// <summary>
@@ -60,12 +60,25 @@ public class ServerCommunication : MonoBehaviour
         Debug.Log("Server: " + msg);
     }
 
+    public void SetIP(string hostIP)
+    {
+        this.hostIP = hostIP;
+        Debug.Log(hostIP);
+    }
+
+    public void SetPort(string port)
+    {
+        this.port = int.Parse(port);
+    }
+
     /// <summary>
     /// Call this method to connect to the server
     /// </summary>
     public async void ConnectToServer()
     {
-        await client.Connect();
+        server = "ws://" + host + ":" + port;
+        Debug.Log("Connecting to: " + server);
+        await client.Connect(server);
     }
 
     /// <summary>
