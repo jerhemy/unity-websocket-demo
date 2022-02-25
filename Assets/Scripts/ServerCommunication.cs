@@ -1,4 +1,5 @@
 using System;
+using Netcode;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -16,6 +17,9 @@ public class ServerCommunication : MonoBehaviour
     // Flag to use localhost
     [SerializeField]
     private bool useLocalhost = false;
+
+    // Reference to ObjectManager
+    [SerializeField] private ObjectManager _objectManager;
 
     // Address used in code
     private string host => useLocalhost ? "localhost" : hostIP;
@@ -35,7 +39,6 @@ public class ServerCommunication : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        OnConnected.AddListener(HandleConnected);
         client = new WsClient();
     }
 
@@ -55,23 +58,26 @@ public class ServerCommunication : MonoBehaviour
         }
     }
 
-    private void HandleConnected()
-    {
-        
-    }
-
     /// <summary>
     /// Method responsible for handling server messages
     /// </summary>
     /// <param name="msg">Message.</param>
     private void HandleMessage(string msg)
     {
-        Debug.Log("Server: " + msg);
+        // Deserialize message from string
+        Message message = JsonUtility.FromJson<Message>(msg);
+        
+        // Act depending on title of message
+        switch (message.title)
+        {
+            case "spawn":
+                _objectManager.SpawnPlayer(message.content);
+                break;
+            default:
+                Debug.Log("Server: " + msg);
+                break;
+        }
     }
-    
-    /// <summary>
-    /// Calls UnityEvent upon successful Connection
-    /// </summary>
 
     public void SetIP(string hostIP)
     {
