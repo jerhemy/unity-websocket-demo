@@ -3,10 +3,13 @@ const WebSocketServer = require('ws');
  
 // Creating a new websocket server
 const wss = new WebSocketServer.Server({ port: 3000 })
- 
+const clients = []; //keep track of clients
+
 // Creating connection using websocket
-wss.on("connection", ws => {
-    console.log("new client connected");
+wss.on("connection", (ws, req) => {
+    ws.id = req.headers['sec-websocket-key'];
+    clients[ws.id] = ws.id
+    console.log(`new client connected, id: ${ws.id}`);
     // sending message
     ws.on("message", data => {
         console.log(`Client has sent us: ${data}`)
@@ -14,7 +17,8 @@ wss.on("connection", ws => {
     });
     // handling what to do when clients disconnects from server
     ws.on("close", () => {
-        console.log("the client has disconnected");
+        console.log(`client has disconnected, id: ${ws.id}`);
+        clients.splice(ws.id, 1); // remove connection from clients
     });
     // handling client connection error
     ws.onerror = function () {
