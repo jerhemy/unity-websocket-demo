@@ -1,5 +1,6 @@
 // Importing the required modules
 const WebSocketServer = require('ws');
+const {CreateSpawnMessage} = require("./Message");
  
 // Creating a new websocket server
 const wss = new WebSocketServer.Server({ port: 3000 })
@@ -7,18 +8,19 @@ const clients = new Map(); //keep track of clients
 
 // Creating connection using websocket
 wss.on("connection", (ws, req) => {
+    // Tell new client about other players
+    clients.forEach(client => {
+        ws.send(CreateSpawnMessage(client.id));
+    })
+
+    // Add client to Map with id
     ws.id = req.headers['sec-websocket-key'];
     clients.set(ws.id, ws);
     console.log(`new client connected, id: ${ws.id}`);
 
     // Spawn object for player
     // Send out spawn message to all clients
-    let position = new PositionInfo(ws.id);
-    let message = new Message();
-    message.title = "spawn";
-    message.content = position;
-    let jsonMsg = JSON.stringify(message);
-    clients.forEach(client => client.send(jsonMsg))
+    clients.forEach(client => client.send(CreateSpawnMessage(ws.id)))
 
     // sending message
     ws.on("message", data => {
@@ -35,19 +37,3 @@ wss.on("connection", (ws, req) => {
     }
 });
 console.log("The WebSocket server is running on port 3000");
-
-// class for ws messages
-class Message {
-    title // string
-    content // body of the message
-}
-
-// class for objects in Unity
-class PositionInfo {
-    owner // connection id that owns object
-    position // vector3
-    rotation // vector3
-    constructor(id) {
-        this.owner = id
-    }
-}

@@ -5,7 +5,7 @@ namespace Netcode
     [Serializable]
     public class Message
     {
-        public String title;
+        public string title;
         public PositionInfo content;
     }
 }
