@@ -1,6 +1,6 @@
 // Importing the required modules
 const WebSocketServer = require('ws');
-const {CreateSpawnMessage} = require("./Message");
+const {CreateSpawnMessage, Message, PositionInfo} = require("./Message");
  
 // Creating a new websocket server
 const wss = new WebSocketServer.Server({ port: 3000 })
@@ -17,6 +17,7 @@ wss.on("connection", (ws, req) => {
     ws.id = req.headers['sec-websocket-key'];
     clients.set(ws.id, ws);
     console.log(`new client connected, id: ${ws.id}`);
+    ws.send(JSON.stringify(new Message("client_id", new PositionInfo(ws.id)))); // Send id to client
 
     // Spawn object for player
     // Send out spawn message to all clients

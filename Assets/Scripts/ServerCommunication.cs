@@ -3,6 +3,7 @@ using Netcode;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class ServerCommunication : MonoBehaviour
 {
@@ -32,6 +33,11 @@ public class ServerCommunication : MonoBehaviour
 
     [SerializeField] private TMP_InputField inputField;
 
+    [HideInInspector]
+    public string ClientID; // ClientID sent by server
+    
+    public static ServerCommunication Singleton; // Singleton for access from other scripts
+
     public UnityEvent OnConnected;
     
     /// <summary>
@@ -40,6 +46,7 @@ public class ServerCommunication : MonoBehaviour
     private void Awake()
     {
         client = new WsClient();
+        Singleton = this;
     }
 
     /// <summary>
@@ -70,6 +77,9 @@ public class ServerCommunication : MonoBehaviour
         // Act depending on title of message
         switch (message.title)
         {
+            case "client_id": // Receive ID from server
+                ClientID = message.content.owner;
+                break;
             case "spawn":
                 _objectManager.SpawnPlayer(message.content);
                 break;

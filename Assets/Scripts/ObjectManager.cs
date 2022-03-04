@@ -20,6 +20,13 @@ public class ObjectManager : MonoBehaviour
     {
         GameObject player = GameObject.Instantiate(playerPrefab);
         players.Add(positionInfo.owner, player);
+        
+        // Disable player controller script if not local player
+        if (positionInfo.owner != ServerCommunication.Singleton.ClientID)
+        {
+            player.GetComponent<PlayerController>().enabled = false;
+        }
+        
         Debug.Log("Player " + positionInfo.owner + " has been spawned!");
     }
 }

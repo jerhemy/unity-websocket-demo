@@ -10,6 +10,10 @@ function CreateSpawnMessage(id) {
 class Message {
   title // string
   content // body of the message
+  constructor(title, content) {
+    this.title = title;
+    this.content = content;
+  }
 }
 
 // class for objects in Unity
@@ -22,4 +26,4 @@ class PositionInfo {
   }
 }
 
-module.exports = {CreateSpawnMessage};
+module.exports = {CreateSpawnMessage, Message, PositionInfo};
