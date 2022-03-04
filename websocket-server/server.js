@@ -25,7 +25,8 @@ wss.on("connection", (ws, req) => {
 
     // sending message
     ws.on("message", data => {
-        
+        // console.log(JSON.parse(data));
+        clients.forEach(client => client.send(data))
     });
     // handling what to do when clients disconnects from server
     ws.on("close", () => {

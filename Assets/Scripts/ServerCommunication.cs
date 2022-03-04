@@ -80,6 +80,9 @@ public class ServerCommunication : MonoBehaviour
             case "client_id": // Receive ID from server
                 ClientID = message.content.owner;
                 break;
+            case "position":
+                _objectManager.ReceivePosition(message.content);
+                break;
             case "spawn":
                 _objectManager.SpawnPlayer(message.content);
                 break;
